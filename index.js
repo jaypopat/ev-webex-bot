@@ -13,7 +13,7 @@ const config = {
   port: process.env.PORT,
 };
 
-const api = "http://localhost:3000";
+const api = process.env.API_URL;
 
 var framework = new framework(config);
 framework.start();
@@ -29,7 +29,7 @@ framework.on("log", (msg) => {
 });
 
 framework.hears("available chargers", (bot, trigger) => {
-        axios.get(`${api}/available-charging-stations`)     
+  axios.get(`${api}/available-charging-stations`)
     .then((response) => {
       const chargers = response.data;
       let msg = "Available chargers: \n";
@@ -69,11 +69,7 @@ framework.hears("charge", (bot, trigger) => {
         "id": "connectorType",
         "choices": [
           {
-            "title": "CCS Type 1",
-            "value": "CCS"
-          },
-          {
-            "title": "CCS Type 2",
+            "title": "CCS",
             "value": "CCS"
           },
           {
@@ -112,6 +108,13 @@ framework.hears("queue for all", (bot, trigger) => {
   axios.get(`${api}/queue-for-all`)
     .then((response) => {
       const queue = response.data;
+
+      // if queue empty
+      if (queue.length === 0) {
+        bot.say("Queue is empty. Call the charge function to get started!");
+        return;
+      }
+
       let msg = "Queue for all:\n";
       queue.forEach((request) => {
         msg += `Name: ${request.name}, Connector: ${request.connector}\n`;
@@ -124,20 +127,42 @@ framework.hears("queue for all", (bot, trigger) => {
     });
 });
 
+
+// return details for specific charging station
+framework.hears("charging station details", (bot, trigger) => {
+  let args = trigger.args;
+  let id = args[4];
+  console.log(id);
+  axios.get(`${api}/charging-stations/${id}`)
+    .then((response) => {
+      const charger = response.data;
+      let msg = `Charging station details for ${id}:\n`;
+      msg += `Location: ${charger.location.address}\n`;
+      msg += `Type: ${charger.type}\n`;
+      msg += `Status: ${charger.status}\n`;
+      msg += `Connector types: ${charger.connectorTypes.join(", ")}\n`;
+      bot.say(msg);
+    })
+    .catch((error) => {
+      console.error("Failed to get charging station details:", error);
+      bot.say("Failed to get charging station details");
+    });
+});
+
 framework.hears("queue for connector", (bot, trigger) => {
   const connector = trigger.args[3];
-  axios.get(`${api}/queue-for-me`,{
+  axios.get(`${api}/queue-for-me`, {
     params: {
       connector
     }
   })
     .then((response) => {
-        const queue = response.data;
-        let msg = `Queue for ${connector}:\n`;
-        queue.forEach((request) => {
-            msg += `Name: ${request.name}\n`;
-        });
-        bot.say(msg);
+      const queue = response.data;
+      let msg = `Queue for ${connector}:\n`;
+      queue.forEach((request) => {
+        msg += `Name: ${request.name}\n`;
+      });
+      bot.say(msg);
     })
 });
 
