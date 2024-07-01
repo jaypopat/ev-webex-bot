@@ -33,7 +33,7 @@ app.get("/queue-for-all", (req, res) => {
 });
 
 // as a result if employees wanna switch around spots they can do so by communicating with each other this will be a feature that can be added in the future
-app.get("/queue-for-me", (req, res) => {
+app.post("/queue-for-me", (req, res) => {
     const connector = req.body.connector;
 
     const customQueue = waitingList.filter(request => {

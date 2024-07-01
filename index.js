@@ -175,22 +175,28 @@ framework.hears("charging station details", (bot, trigger) => {
 });
 
 framework.hears("queue for connector", (bot, trigger) => {
-  const connector = trigger.args[3];
-  axios.get(`${api}/queue-for-me`, {
-    params: {
-      connector   
-    }
-  })
+  const connector = trigger.args[4];
+  console.log("Requesting queue for connector:", connector); 
+  axios.post(`${api}/queue-for-me`, {connector: connector })
     .then((response) => {
+      console.log(response);
       const queue = response.data;
+      console.log("Received queue data:", queue);
       let msg = `Queue for ${connector}:\n`;
-      queue.forEach((request) => {
-        msg += `Name: ${request.name}\n`;
-      });
+      if (queue.length === 0) {
+        msg += "The queue is currently empty.";
+      } else {
+        queue.forEach((request) => {    
+          msg += `Name: ${request.name}\n`;
+        });
+      }
       bot.say(msg);
     })
+    .catch((error) => {
+      console.error("Failed to get queue for connector:", error);
+      bot.say("An error occurred while retrieving the queue information.");
+    });
 });
-
 
 framework.on("attachmentAction", (bot, trigger) => {
   const connectorType = trigger.attachmentAction.inputs.connectorType;
