@@ -1,0 +1,54 @@
+[
+    {
+        "id": "1",
+        "name": "Car Park Fast Charger 1",
+        "location": {
+            "address": "ABC Car Park, 123 Main Street, Anytown",
+            "latitude": 51.5074,
+            "longitude": -0.1278
+        },
+        "type": "DC Fast Charger",
+        "powerOutputKW": 150,
+        "status": "Available",
+        "connectorTypes": ["CCS", "CHAdeMO"]
+    },
+    {
+        "id": "2",
+        "name": "Car Park Fast Charger 2",
+        "location": {
+            "address": "ABC Car Park, 123 Main Street, Anytown",
+            "latitude": 51.5074,
+            "longitude": -0.1278
+        },
+        "type": "DC Fast Charger",
+        "powerOutputKW": 350,
+        "status": "Available",
+        "connectorTypes": ["CCS", "Tesla"]
+    },
+    {
+        "id": "3",
+        "name": "Car Park Level 2 Charger 1",
+        "location": {
+            "address": "ABC Car Park, 123 Main Street, Anytown",
+            "latitude": 51.5074,
+            "longitude": -0.1278
+        },
+        "type": "Level 2 AC Charger",
+        "powerOutputKW": 22,
+        "status": "Available",
+        "connectorTypes": ["Type 2"]
+    },
+    {
+        "id": "4",
+        "name": "Car Park Level 2 Charger 2",
+        "location": {
+            "address": "ABC Car Park, 123 Main Street, Anytown",
+            "latitude": 51.5074,
+            "longitude": -0.1278
+        },
+        "type": "Level 2 AC Charger",
+        "powerOutputKW": 7,
+        "status": "Available",
+        "connectorTypes": ["Type 1"]
+    }
+]

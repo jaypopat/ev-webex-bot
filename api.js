@@ -3,64 +3,12 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 const PORT = process.env.BACKEND_API_PORT;
-const db = [
-    {
-        id: "1",
-        name: "Car Park Fast Charger 1",
-        location: {
-            address: "ABC Car Park, 123 Main Street, Anytown",
-            latitude: 51.5074,
-            longitude: -0.1278
-        },
-        type: "DC Fast Charger",
-        powerOutputKW: 150,
-        status: "Available",
-        connectorTypes: ["CCS", "CHAdeMO"]
-    },
-    {
-        id: "2",
-        name: "Car Park Fast Charger 2",
-        location: {
-            address: "ABC Car Park, 123 Main Street, Anytown",
-            latitude: 51.5074,
-            longitude: -0.1278
-        },
-        type: "DC Fast Charger",
-        powerOutputKW: 350,
-        status: "Available",
-        connectorTypes: ["CCS", "Tesla"]
-    },
-    {
-        id: "3",
-        name: "Car Park Level 2 Charger 1",
-        location: {
-            address: "ABC Car Park, 123 Main Street, Anytown",
-            latitude: 51.5074,
-            longitude: -0.1278
-        },
-        type: "Level 2 AC Charger",
-        powerOutputKW: 22,
-        status: "Available",
-        connectorTypes: ["Type 2"]
-    },
-    {
-        id: "4",
-        name: "Car Park Level 2 Charger 2",
-        location: {
-            address: "ABC Car Park, 123 Main Street, Anytown",
-            latitude: 51.5074,
-            longitude: -0.1278
-        },
-        type: "Level 2 AC Charger",
-        powerOutputKW: 7,
-        status: "Available",
-        connectorTypes: ["Type 1"]
-    }
-];
+const db = require("./db.json");
+
 
 const waitingList = [];
 
-app.get("/", (req, res) => {        
+app.get("/", (req, res) => {
     res.send("Hello from Express!");
 });
 
@@ -106,30 +54,42 @@ app.get("/charging-stations/:id", (req, res) => {
     }
 });
 
-    function processQueue() {
-        waitingList.forEach((request, index) => {
-            const charger = db.find(charger =>
-                charger.status === "Available" && charger.connectorTypes.includes(request.connector)
-            );
 
-            if (charger) {
-                charger.status = "Charging";
-                console.log(`Assigned charger: ${charger.name} ${charger.id} to request ${request.name}`);
-                waitingList.splice(index, 1);
-                // Simulate charge end after 15 seconds
-                setTimeout(() => {
-                    charger.status = "Available";
-                    console.log(`Charging session ended for ${charger.name}`);
-                    processQueue();  // Check queue again after a charger becomes available
-                }, 15000); // 15 seconds in milliseconds
-            } else {
-                console.log(`No available charger for request: ${request.name} with connector ${request.connector}`);
-            }
-        });
-    }
-// Poll the queue every 5 seconds
+// make an api request to the bot server to send a message
+https://webexapis.com/v1/messages
+{
+    "text": "charger assigned to this guy",
+    "roomId": "dynamic innit",
+    "toPersonId": "dynamic innit"
+  }
+
+
+function processQueue() {
+    waitingList.forEach((request, index) => {
+        const charger = db.find(charger =>
+            charger.status === "Available" && charger.connectorTypes.includes(request.connector)
+        );
+
+        if (charger) {
+            charger.status = "Charging";
+            console.log(`Assigned charger: ${charger.name} ${charger.id} to request ${request.name}`);
+            waitingList.splice(index, 1);
+            // Simulate charge end after 15 seconds
+            setTimeout(() => {
+                charger.status = "Available";
+                console.log(`Charging session ended for ${charger.name}`);
+                processQueue();  // Check queue again after a charger becomes available
+            }, 15000); // 15 seconds in milliseconds
+        } else {
+            console.log(`No available charger for request: ${request.name} with connector ${request.connector}`);
+        }
+    });
+}
+
+
+// Poll the queue every 5 seconds       
 setInterval(processQueue, 5000);
 
 app.listen(PORT, () => {
-    console.log(`Express server running at http://localhost:${PORT}/`);
+    console.log(`Express server running at http://localhost:${PORT}/`); 
 });     
