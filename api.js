@@ -55,15 +55,6 @@ app.get("/charging-stations/:id", (req, res) => {
 });
 
 
-// make an api request to the bot server to send a message
-https://webexapis.com/v1/messages
-{
-    "text": "charger assigned to this guy",
-    "roomId": "dynamic innit",
-    "toPersonId": "dynamic innit"
-  }
-
-
 function processQueue() {
     waitingList.forEach((request, index) => {
         const charger = db.find(charger =>
