@@ -28,6 +28,31 @@ framework.on("log", (msg) => {
   console.log(msg);
 });
 
+framework.hears("roomid", (bot, trigger) => {
+  console.log(bot.room.id);
+});
+
+function pollBotMessages() {
+  axios.get(`${api}/bot-messages`)
+    .then((response) => {
+      const messages = response.data;
+      messages.forEach((message) => {
+        framework.webex.messages.create({
+          // hardcoded roomId for the bot
+          roomId: 'Y2lzY29zcGFyazovL3VybjpURUFNOnVzLXdlc3QtMl9yL1JPT00vYThiYWNjZTAtMzczYS0xMWVmLTk1MjUtM2IwZGUzNzEyMmNk',
+          text: message
+        });
+
+      });
+    })
+    .catch((error) => {
+      console.error("Failed to get bot messages:", error);
+    });
+}
+
+// Poll for bot messages every second
+setInterval(pollBotMessages, 1000);
+
 framework.hears("available chargers", (bot, trigger) => {
   axios.get(`${api}/available-charging-stations`)
     .then((response) => {
@@ -153,7 +178,7 @@ framework.hears("queue for connector", (bot, trigger) => {
   const connector = trigger.args[3];
   axios.get(`${api}/queue-for-me`, {
     params: {
-      connector
+      connector   
     }
   })
     .then((response) => {
